@@ -1,0 +1,48 @@
+Remove-Variable * -ErrorAction SilentlyContinue
+
+# Manually enter the zoom-levels
+
+5, 6, 7, 8, 9, 10, 11, 12, 13 | foreach {
+
+# manually enter the location of the two sets of tiles
+$New_folder = "D:\temp\D002\$_\"
+$Old_folder = "D:\Export\D003\$_\"
+
+Write-Output "--Level $_ started--
+"
+Write-Output "Time is now $(Get-Date)"
+
+$New = Get-ChildItem -Recurse -File -Name $New_folder
+Write-Output "--New folder listed--"
+# Write-Output -InputObject $New
+$New | Out-File D:\temp\script-mappar\debug_new.txt
+
+$Old = Get-ChildItem -Recurse -File -Name $Old_folder
+
+Write-Output "--old folder listed--"
+# Write-Output -InputObject $Old
+$Old | Out-File D:\temp\script-mappar\debug_old.txt
+
+$Diff = Compare-Object $New $Old -ExcludeDifferent -IncludeEqual -PassThru 
+Write-Output "--Comparison done--"
+
+# Write-Output -InputObject --Compare--
+# Write-Output -InputObject $Diff
+$Diff | Out-File D:\temp\script-mappar\debug_diff.txt
+
+$nbrimages = 0
+ $Diff | foreach { 
+    $NewImage = "$New_folder$_"
+    $OldImage = "$Old_folder$_"
+    magick $NewImage -fuzz 10% -transparent white $NewImage
+#   magick $OldImage -fuzz 10% -transparent white $OldImage #do not need to make both transparent
+    magick composite $NewImage $OldImage $NewImage
+    $nbrimages = $nbrimages +1
+ }
+Write-Output "-- $nbrimages images merged --
+
+--Level $_ Ended--
+"
+
+
+}
