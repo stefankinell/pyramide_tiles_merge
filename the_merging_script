@@ -2,10 +2,11 @@ Remove-Variable * -ErrorAction SilentlyContinue
 
 # Manually enter the zoom-levels
 
-5, 6, 7, 8, 9, 10, 11, 12, 13 | foreach {
+5, 6, 7, 8, 9, 10, 11, 12, 13, 14,
+15 | foreach {
 
 # manually enter the location of the two sets of tiles
-$New_folder = "D:\temp\D002\$_\"
+$New_folder = "D:\Export\D002\$_\"
 $Old_folder = "D:\Export\D003\$_\"
 
 Write-Output "--Level $_ started--
@@ -15,21 +16,22 @@ Write-Output "Time is now $(Get-Date)"
 $New = Get-ChildItem -Recurse -File -Name $New_folder
 Write-Output "--New folder listed--"
 # Write-Output -InputObject $New
-$New | Out-File D:\temp\script-mappar\debug_new.txt
+# $New | Out-File D:\temp\debug_new.txt
 
 $Old = Get-ChildItem -Recurse -File -Name $Old_folder
 
 Write-Output "--old folder listed--"
 # Write-Output -InputObject $Old
-$Old | Out-File D:\temp\script-mappar\debug_old.txt
+# $Old | Out-File D:\temp\debug_old.txt
 
 $Diff = Compare-Object $New $Old -ExcludeDifferent -IncludeEqual -PassThru 
 Write-Output "--Comparison done--"
 
 # Write-Output -InputObject --Compare--
 # Write-Output -InputObject $Diff
-$Diff | Out-File D:\temp\script-mappar\debug_diff.txt
+# $Diff | Out-File D:\temp\debug_diff.txt
 
+# for all images that exist in both structure, make one transparent and then overlay it ontop of the other, and save it in the nes folder structure
 $nbrimages = 0
  $Diff | foreach { 
     $NewImage = "$New_folder$_"
