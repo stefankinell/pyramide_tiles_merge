@@ -1,13 +1,18 @@
 Remove-Variable * -ErrorAction SilentlyContinue
 
+$Newlocation = "C048"
+$Oldlocation = "C032-41"
+
+
 # Manually enter the zoom-levels
 # handling level 5 to 13 with one foreach-statement
 
-5, 6, 7, 8, 9, 10, 11, 12, 13 | foreach {
+5, 6, 7, 8, 9, 10, 11, 12 | foreach {
 
-# manually enter the location of the two sets of tiles
-$New_folder = "D:\Export\D002\$_\"
-$Old_folder = "D:\Export\D003\$_\"
+if (Test-Path -Path D:\Export\$Oldlocation\$_\) {
+
+$New_folder = "D:\Export\$Newlocation\$_\"
+$Old_folder = "D:\Export\$Oldlocation\$_\"
 
 Write-Output "--Level $_ started--
 "
@@ -45,105 +50,188 @@ Write-Output "-- $nbrimages images merged --
 
 --Level $_ Ended--
 "
+ }
+}
+
+# treat level 13 to 15 separately
+
+$folder13 = Get-ChildItem -Recurse -Directory -Name D:\Export\$Newlocation\13\
+
+
+$folder13 | foreach {
+
+if (Test-Path -Path D:\Export\$Oldlocation\13\$_\) {
+    
+$New_folder13 = "D:\Export\$Newlocation\13\$_\"
+$Old_folder13 = "D:\Export\$Oldlocation\13\$_\"
+
+Write-Output "--Level 13-$_ started--
+"
+Write-Output "Time is now $(Get-Date)"
+
+$New13 = Get-ChildItem -Recurse -File -Name $New_folder13
+# Write-Output "--New folder listed--"
+# Write-Output -InputObject $New13
+# $New13 | Out-File D:\temp\script-mappar\debug_new.txt
+
+$Old13 = Get-ChildItem -Recurse -File -Name $Old_folder13
+
+# Write-Output "--old folder listed--"
+# Write-Output -InputObject $Old13
+# $Old13 | Out-File D:\temp\script-mappar\debug_old.txt
+
+$Diff13 = Compare-Object $New13 $Old13 -ExcludeDifferent -IncludeEqual -PassThru 
+# Write-Output "--Comparison done--
+#
+# This is the diff
+# --
+# $Diff13
+# --
+# "
+
+# Write-Output -InputObject --Compare--
+# Write-Output -InputObject $Diff13
+# $Diff13 | Out-File D:\temp\script-mappar\debug_diff.txt
+
+$nbrimages13 = 0
+ $Diff13 | foreach { 
+    $NewImage13 = "$New_folder13$_"
+    $OldImage13 = "$Old_folder13$_"
+# Write-Output "-- $NewImage13 merged with -- "
+# Write-Output "-- $OldImage13 -- 
+# "
+
+    magick $NewImage13 -fuzz 10% -transparent white $NewImage13
+ #   magick $OldImage13 -fuzz 10% -transparent white $OldImage13 #do not need to make both transparent
+    magick composite $NewImage13 $OldImage13 $NewImage13
+    $nbrimages15 = $nbrimages13 +1
+ }
+Write-Output "-- $nbrimages13 images merged --
+
+--Level 13-$_ Ended--
+"
+}
 
 
 }
 
-# a not so beautifull way to handle that level 14 and 15 have so many images to compare. Breaking them out in two seperate loops to do then folder by folder instead, decreasing execution time with a factor 60 since comparison in big files through compare-objects are by far the most time consuming. 
 
-Remove-Variable * -ErrorAction SilentlyContinue
-
-$folder14 = Get-ChildItem -Recurse -Directory -Name D:\Export\D003\15\
+$folder14 = Get-ChildItem -Recurse -Directory -Name D:\Export\$Newlocation\14\
 
 
 $folder14 | foreach {
-$New_folder = "D:\Export\D003\14\$_\"
-$Old_folder = "D:\Export\D002\14\$_\"
+
+if (Test-Path -Path D:\Export\$Oldlocation\14\$_\) {
+    
+$New_folder14 = "D:\Export\$Newlocation\14\$_\"
+$Old_folder14 = "D:\Export\$Oldlocation\14\$_\"
 
 Write-Output "--Level 14-$_ started--
 "
 Write-Output "Time is now $(Get-Date)"
 
-$New = Get-ChildItem -Recurse -File -Name $New_folder
-Write-Output "--New folder listed--"
-# Write-Output -InputObject $New
-$New | Out-File D:\temp\script-mappar\debug_new.txt
+$New14 = Get-ChildItem -Recurse -File -Name $New_folder14
+# Write-Output "--New folder listed--"
+# Write-Output -InputObject $New14
+# $New14 | Out-File D:\temp\script-mappar\debug_new.txt
 
-$Old = Get-ChildItem -Recurse -File -Name $Old_folder
+$Old14 = Get-ChildItem -Recurse -File -Name $Old_folder14
 
-Write-Output "--old folder listed--"
-# Write-Output -InputObject $Old
-$Old | Out-File D:\temp\script-mappar\debug_old.txt
+# Write-Output "--old folder listed--"
+# Write-Output -InputObject $Old14
+# $Old14 | Out-File D:\temp\script-mappar\debug_old.txt
 
-$Diff = Compare-Object $New $Old -ExcludeDifferent -IncludeEqual -PassThru 
-Write-Output "--Comparison done--"
+$Diff14 = Compare-Object $New14 $Old14 -ExcludeDifferent -IncludeEqual -PassThru 
+# Write-Output "--Comparison done--
+#
+# This is the diff
+# --
+# $Diff14
+# --
+# "
 
 # Write-Output -InputObject --Compare--
-# Write-Output -InputObject $Diff
-$Diff | Out-File D:\temp\script-mappar\debug_diff.txt
+# Write-Output -InputObject $Diff14
+# $Diff14 | Out-File D:\temp\script-mappar\debug_diff.txt
 
-$nbrimages = 0
- $Diff | foreach { 
-    $NewImage = "$New_folder$_"
-    $OldImage = "$Old_folder$_"
-    magick $NewImage -fuzz 10% -transparent white $NewImage
- #  magick $OldImage -fuzz 10% -transparent white $OldImage #do not need to make both transparent
-    magick composite $NewImage $OldImage $NewImage
-    $nbrimages = $nbrimages +1
+$nbrimages14 = 0
+ $Diff14 | foreach { 
+    $NewImage14 = "$New_folder14$_"
+    $OldImage14 = "$Old_folder14$_"
+# Write-Output "-- $NewImage14 merged with -- "
+# Write-Output "-- $OldImage14 -- 
+# "
+
+    magick $NewImage14 -fuzz 10% -transparent white $NewImage14
+ #   magick $OldImage14 -fuzz 10% -transparent white $OldImage14 #do not need to make both transparent
+    magick composite $NewImage14 $OldImage14 $NewImage14
+    $nbrimages14 = $nbrimages14 +1
  }
-Write-Output "-- $nbrimages images merged --
+Write-Output "-- $nbrimages14 images merged --
 
 --Level 14-$_ Ended--
 "
+}
 
 
 }
 
-
-Remove-Variable * -ErrorAction SilentlyContinue
-
-$folder15 = Get-ChildItem -Recurse -Directory -Name D:\Export\D003\14\
+$folder15 = Get-ChildItem -Recurse -Directory -Name D:\Export\$Newlocation\15\
 
 
 $folder15 | foreach {
-$New_folder = "D:\Export\D003\15\$_\"
-$Old_folder = "D:\Export\D002\15\$_\"
+
+if (Test-Path -Path D:\Export\$Oldlocation\15\$_\) {
+    
+$New_folder15 = "D:\Export\$Newlocation\15\$_\"
+$Old_folder15 = "D:\Export\$Oldlocation\15\$_\"
 
 Write-Output "--Level 15-$_ started--
 "
 Write-Output "Time is now $(Get-Date)"
 
-$New = Get-ChildItem -Recurse -File -Name $New_folder
-Write-Output "--New folder listed--"
-# Write-Output -InputObject $New
-$New | Out-File D:\temp\script-mappar\debug_new.txt
+$New15 = Get-ChildItem -Recurse -File -Name $New_folder15
+# Write-Output "--New folder listed--"
+# Write-Output -InputObject $New15
+# $New14 | Out-File D:\temp\script-mappar\debug_new.txt
 
-$Old = Get-ChildItem -Recurse -File -Name $Old_folder
+$Old15 = Get-ChildItem -Recurse -File -Name $Old_folder15
 
-Write-Output "--old folder listed--"
-# Write-Output -InputObject $Old
-$Old | Out-File D:\temp\script-mappar\debug_old.txt
+# Write-Output "--old folder listed--"
+# Write-Output -InputObject $Old15
+# $Old15 | Out-File D:\temp\script-mappar\debug_old.txt
 
-$Diff = Compare-Object $New $Old -ExcludeDifferent -IncludeEqual -PassThru 
-Write-Output "--Comparison done--"
+$Diff15 = Compare-Object $New15 $Old15 -ExcludeDifferent -IncludeEqual -PassThru 
+# Write-Output "--Comparison done--
+#
+# This is the diff
+# --
+# $Diff15
+# --
+# "
 
 # Write-Output -InputObject --Compare--
-# Write-Output -InputObject $Diff
-$Diff | Out-File D:\temp\script-mappar\debug_diff.txt
+# Write-Output -InputObject $Diff15
+# $Diff15 | Out-File D:\temp\script-mappar\debug_diff.txt
 
-$nbrimages = 0
- $Diff | foreach { 
-    $NewImage = "$New_folder$_"
-    $OldImage = "$Old_folder$_"
-    magick $NewImage -fuzz 10% -transparent white $NewImage
- #  magick $OldImage -fuzz 10% -transparent white $OldImage #do not need to make both transparent
-    magick composite $NewImage $OldImage $NewImage
-    $nbrimages = $nbrimages +1
+$nbrimages15 = 0
+ $Diff15 | foreach { 
+    $NewImage15 = "$New_folder15$_"
+    $OldImage15 = "$Old_folder15$_"
+# Write-Output "-- $NewImage15 merged with -- "
+# Write-Output "-- $OldImage15 -- 
+# "
+
+    magick $NewImage15 -fuzz 10% -transparent white $NewImage15
+ #   magick $OldImage15 -fuzz 10% -transparent white $OldImage15 #do not need to make both transparent
+    magick composite $NewImage15 $OldImage15 $NewImage15
+    $nbrimages15 = $nbrimages15 +1
  }
-Write-Output "-- $nbrimages images merged --
+Write-Output "-- $nbrimages15 images merged --
 
 --Level 15-$_ Ended--
 "
+}
 
 
 }
