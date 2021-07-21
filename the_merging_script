@@ -1,7 +1,7 @@
 Remove-Variable * -ErrorAction SilentlyContinue
 
 $Newlocation = "C048"
-$Oldlocation = "C032-41"
+$Oldlocation = "Master"
 
 
 # Manually enter the zoom-levels
