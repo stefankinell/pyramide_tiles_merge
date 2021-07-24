@@ -1,13 +1,14 @@
 Remove-Variable * -ErrorAction SilentlyContinue
 
-$Newlocation = "C048"
-$Oldlocation = "Master"
+$Newlocation = "C005"
+$Oldlocation = "Master-backup"
 
 
 # Manually enter the zoom-levels
 # handling level 5 to 13 with one foreach-statement
 
 5, 6, 7, 8, 9, 10, 11, 12 | foreach {
+
 
 if (Test-Path -Path D:\Export\$Oldlocation\$_\) {
 
@@ -235,3 +236,12 @@ Write-Output "-- $nbrimages15 images merged --
 
 
 }
+
+Write-Output "
+----------------------------------------------------------------------------
+--- Comparison and merger between $Newlocation and $Oldlocation finished ---
+----------------------------------------------------------------------------
+"
+
+[system.media.systemsounds]::Hand.play()
+[system.media.systemsounds]::Asterisk.play()
